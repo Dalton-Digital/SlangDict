@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SlangDict | Premium Term Store</title>
+    <script src="terms.js"></script>
+    
+    <style>
+        :root { --primary: #6366f1; --accent: #c084fc; --glass: rgba(255, 255, 255, 0.05); }
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .container { width: 100%; max-width: 550px; text-align: center; }
+        h1 { font-size: 3rem; background: linear-gradient(45deg, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top: 50px; }
+        .search-container { background: var(--glass); border-radius: 20px; padding: 10px; border: 1px solid rgba(255,255,255,0.1); display: flex; margin-top: 20px; }
+        input { flex: 1; background: transparent; border: none; color: white; padding: 15px; font-size: 1.1rem; outline: none; }
+        button { background: var(--primary); color: white; border: none; padding: 0 25px; border-radius: 15px; cursor: pointer; font-weight: bold; }
+        #result { display: none; margin-top: 30px; text-align: left; }
+        .result-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; }
+        .label { color: #818cf8; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .main-term { font-size: 2rem; font-weight: 800; margin: 10px 0; }
+        .tag { background: #334155; padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; margin-right: 5px; display: inline-block; margin-top: 5px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .grid-item { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>SlangDict</h1>
+    <div class="search-container">
+        <input type="text" id="query" placeholder="Type Zulu slang or English...">
+        <button onclick="handleSearch()">Search</button>
+    </div>
+
+    <div id="result">
+        <div class="result-card">
+            <div class="label">English Meaning</div>
+            <div class="main-term" id="out-en"></div>
+            <div class="label">Zulu Slang Terms</div>
+            <div id="out-tags"></div>
+            <div class="grid">
+                <div class="grid-item"><div class="label">Spanish</div><div id="out-es"></div></div>
+                <div class="grid-item"><div class="label">French</div><div id="out-fr"></div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function handleSearch() {
+        const input = document.getElementById('query').value.toLowerCase().trim();
+        const resultView = document.getElementById('result');
+        
+        // This 'database' variable comes from your terms.js file!
+        const match = database.find(item => 
+            item.english.toLowerCase() === input || 
+            item.slang.includes(input)
+        );
+
+        if (match) {
+            document.getElementById('out-en').innerText = match.english;
+            document.getElementById('out-es').innerText = match.translations.es;
+            document.getElementById('out-fr').innerText = match.translations.fr;
+            
+            const tagBox = document.getElementById('out-tags');
+            tagBox.innerHTML = '';
+            match.slang.forEach(s => {
+                const span = document.createElement('span');
+                span.className = 'tag';
+                span.innerText = s;
+                tagBox.appendChild(span);
+            });
+            resultView.style.display = 'block';
+        } else {
+            alert("Term not found in our premium store.");
+        }
+    }
+</script>
+</body>
+</html>
