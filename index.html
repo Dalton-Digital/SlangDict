@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SlangDict | Premium Zulu-Global</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --accent: #c084fc;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .container { width: 100%; max-width: 500px; text-align: center; margin-top: 50px; }
+        h1 { background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 3rem; margin: 0; }
+        .tagline { color: #64748b; margin-bottom: 30px; }
+        
+        .search-box {
+            display: flex;
+            background: rgba(255,255,255,0.05);
+            padding: 5px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 15px;
+            font-size: 1.1rem;
+            outline: none;
+        }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Result Styling */
+        #result { display: none; margin-top: 30px; text-align: left; animation: fadeIn 0.3s ease; }
+        .main-card { background: var(--glass); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .label { color: #818cf8; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+        .english-val { font-size: 1.8rem; font-weight: 700; margin-bottom: 20px; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-item { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; }
+        
+        .error { color: #f87171; margin-top: 20px; display: none; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>SlangDict</h1>
+    <p class="tagline">Premium Zulu Slang Translator</p>
+
+    <div class="search-box">
+        <input type="text" id="term" placeholder="e.g. Nyuku, Nzomela, Cotton...">
+        <button onclick="findSlang()">Search</button>
+    </div>
+
+    <p id="errorMsg" class="error">That word isn't in our premium vault yet.</p>
+
+    <div id="result">
+        <div class="main-card">
+            <div class="label">Standard English</div>
+            <div id="out-en" class="english-val"></div>
+
+            <div class="grid">
+                <div class="grid-item"><div class="label">Spanish</div><div id="out-es"></div></div>
+                <div class="grid-item"><div class="label">French</div><div id="out-fr"></div></div>
+                <div class="grid-item"><div class="label">German</div><div id="out-de"></div></div>
+                <div id="syn-box" class="grid-item" style="grid-column: span 2;">
+                    <div class="label">Related Zulu Slang</div>
+                    <div id="out-syn" style="color: #94a3b8; font-style: italic;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // THE PREMIUM DATABASE
+    // We group multiple slang terms under one "Meaning"
+    const dictionary = [
+        {
+            slang: ["nyuku", "lozana", "qhweba", "ibhola lomlilo"],
+            meaning: "Money",
+            translations: { es: "Dinero", fr: "Argent", de: "Geld" }
+        },
+        {
+            slang: ["nzomela", "bhomani", "bus", "flour"],
+            meaning: "Bread",
+            translations: { es: "Pan", fr: "Pain", de: "Brot" }
+        },
+        {
+            slang: ["isdwedwe", "cotton", "indwangu", "jewish"],
+            meaning: "Clothes",
+            translations: { es: "Ropa", fr: "Vêtements", de: "Kleidung" }
+        }
+    ];
+
+    function findSlang() {
+        const query = document.getElementById('term').value.toLowerCase().trim();
+        const resultDiv = document.getElementById('result');
+        const errorDiv = document.getElementById('errorMsg');
+
+        // Search logic: Find the object where the slang array includes our query
+        const match = dictionary.find(item => item.slang.includes(query));
+
+        if (match) {
+            document.getElementById('out-en').innerText = match.meaning;
+            document.getElementById('out-es').innerText = match.translations.es;
+            document.getElementById('out-fr').innerText = match.translations.fr;
+            document.getElementById('out-de').innerText = match.translations.de;
+            
+            // Show other slang terms for the same thing
+            const others = match.slang.filter(s => s !== query);
+            document.getElementById('out-syn').innerText = others.join(", ");
+            
+            resultDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+        } else {
+            resultDiv.style.display = 'none';
+            errorDiv.style.display = 'block';
+        }
+    }
+
+    // Enter key support
+    document.getElementById("term").addEventListener("keyup", function(e) {
+        if (e.key === "Enter") findSlang();
+    });
+</script>
+
+</body>
+</html>
